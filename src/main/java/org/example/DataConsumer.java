@@ -19,6 +19,7 @@ public class DataConsumer implements Runnable{
 
     @Override
     public void run() {
+        log.info("Starting up consumer. ");
         Properties properties = new Properties();
         properties.put("bootstrap.servers", ReplicateConfig.cluster2BootstrapServers());
         properties.put("key.deserializer", StringDeserializer.class);
@@ -30,10 +31,20 @@ public class DataConsumer implements Runnable{
         try(KafkaConsumer<String, User> consumer = new KafkaConsumer<>(properties)) {
             consumer.subscribe(Collections.singleton(ReplicateMain.OUTPUT_TOPIC));
             while (true) {
+                log.info("Polling for records");
                 var iterator = consumer.poll(Duration.ofMillis(100)).iterator();
+                log.info("Received some records");
                 while (iterator.hasNext()) {
                     var record = iterator.next();
                     numRecords++;
+                    if (record.value() == null) {
+                        log.info("Received null record");
+                        continue;
+                    }
+                    if (record.value().getTimestamp() == null) {
+                        log.info("Received record with null timestamp");
+                        continue;
+                    }
                     totalLantency += System.currentTimeMillis() - record.value().getTimestamp();
                     log.info("Received record: {}; average latency: {}", record.value(), totalLantency / numRecords);
                 }
