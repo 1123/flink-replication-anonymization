@@ -16,6 +16,7 @@ import java.util.UUID;
 @Builder
 @ToString
 public class User {
+    private Long timestamp;
     private String name;
     private UUID uuid;
     private Integer age;

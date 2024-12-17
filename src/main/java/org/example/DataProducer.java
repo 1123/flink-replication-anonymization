@@ -28,6 +28,7 @@ public class DataProducer implements Runnable {
                         .name(UUID.randomUUID().toString())
                         .age((int) (Math.random() * 100))
                         .uuid(UUID.randomUUID())
+                        .timestamp(System.currentTimeMillis())
                         .build();
                 log.info("Sending {}", user.toString());
                 producer.send(new ProducerRecord<>(ReplicateMain.INPUT_TOPIC, user));

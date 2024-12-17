@@ -22,26 +22,40 @@ public class TopicCreator {
         properties2.put("bootstrap.servers", ReplicateConfig.cluster2BootstrapServers());
         try (AdminClient admin1 = AdminClient.create(properties1);
              AdminClient admin2 = AdminClient.create(properties2)) {
-            try {
-                admin1.deleteTopics(List.of(ReplicateMain.INPUT_TOPIC)).all().get();
-                admin2.deleteTopics(List.of(ReplicateMain.OUTPUT_TOPIC)).all().get();
-            } catch (Exception e) {
-                log.warn("Delete topics failed");
-            }
+            tryDeleteTopics(admin1, admin2);
             Thread.sleep(1000);
-            try {
-                admin1.createTopics(List.of(new NewTopic(ReplicateMain.INPUT_TOPIC, 1, (short) 1)))
-                        .all().get();
-            } catch (Exception e) {
-                log.warn("Exception while creating input topic: {}", e.getMessage());
-            }
-            try {
-                admin2.createTopics(List.of(new NewTopic(ReplicateMain.OUTPUT_TOPIC, 1, (short) 1)))
-                        .all().get();
-            } catch (Exception e) {
-                log.warn("Exception while creating output topic: {}", e.getMessage());
-            }
-            log.info("Created topics");
+            tryCreateTopics(admin1, admin2);
+        }
+    }
+
+    private void tryCreateTopics(AdminClient adminClient1, AdminClient adminClient2) {
+        try {
+            adminClient1.createTopics(List.of(new NewTopic(ReplicateMain.INPUT_TOPIC, 1, (short) 1)))
+                    .all().get();
+            log.info("Created input topic");
+        } catch (Exception e) {
+            log.warn("Exception while creating input topic: {}", e.getMessage());
+        }
+        try {
+            adminClient2.createTopics(List.of(new NewTopic(ReplicateMain.OUTPUT_TOPIC, 1, (short) 1)))
+                    .all().get();
+            log.info("Created output topic");
+        } catch (Exception e) {
+            log.warn("Exception while creating output topic: {}", e.getMessage());
+        }
+    }
+
+    private void tryDeleteTopics(AdminClient adminClient1, AdminClient adminClient2) {
+        try {
+            adminClient1.deleteTopics(List.of(ReplicateMain.INPUT_TOPIC)).all().get();
+            log.info("Deleted input topic");
+        } catch (Exception e) {
+            log.warn("Delete input topic failed");
+        } try {
+            adminClient2.deleteTopics(List.of(ReplicateMain.OUTPUT_TOPIC)).all().get();
+            log.info("Deleted output topic");
+        } catch (Exception e) {
+            log.warn("Delete output topic failed");
         }
     }
 
