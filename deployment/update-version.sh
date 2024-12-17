@@ -1,1 +1,1 @@
-sed -i '.bak' 's/'$1'/'$2'/g' *
+sed -i '.bak' 's/'$1'/'$2'/g' *.json *.sh

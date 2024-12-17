@@ -11,7 +11,7 @@
       "taskmanager.numberOfTaskSlots": "1"
    },
    "flinkVersion": "v1_19",
-   "image": "us-central1-docker.pkg.dev/solutionsarchitect-01/flink-replication-anonymization/flink-replication-anonymization:0.0.7",
+   "image": "us-central1-docker.pkg.dev/solutionsarchitect-01/flink-replication-anonymization/flink-replication-anonymization:0.0.8",
    "job": {
       "jarURI": "local:///opt/flink/Application.jar",
       "parallelism": 3,
