@@ -16,6 +16,12 @@ public class ReplicateMain {
     public static final String OUTPUT_TOPIC = ReplicateConfig.outputTopicName();
 
     private static void replicate() throws Exception {
+        Thread producerThread = new Thread(new DataProducer());
+        producerThread.start();
+        Thread consumerThread = new Thread(new DataConsumer());
+        consumerThread.start();
+
+        new TopicCreator().createTopics();
         KafkaSource<User> source = KafkaSource.<User>builder()
                 .setBootstrapServers(ReplicateConfig.cluster1BootstrapServers())
                 .setTopics(INPUT_TOPIC)
@@ -33,8 +39,7 @@ public class ReplicateMain {
                 .build();
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.fromSource(source, WatermarkStrategy.noWatermarks(), "messages from kafka")
-                .setParallelism(1)
-                .setParallelism(1)
+                .setParallelism(2)
                 .map(user -> User.builder().uuid(user.getUuid()).name("XXXXXX").age(user.getAge()).build())
                 .sinkTo(sink);
         env.execute("Replicate");

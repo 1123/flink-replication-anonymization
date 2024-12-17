@@ -9,16 +9,21 @@ import java.util.Properties;
 import java.util.UUID;
 
 @Slf4j
-public class DataProducer {
+public class DataProducer implements Runnable {
 
     public static void main(String[] args) throws InterruptedException {
+        new DataProducer().run();
+    }
+
+    @Override
+    public void run() {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", ReplicateConfig.cluster1BootstrapServers());
         properties.put("key.serializer", StringSerializer.class);
         properties.put("value.serializer", UserSerializer.class);
         try(KafkaProducer<String, User> producer = new KafkaProducer<>(properties)) {
             while (true) {
-                Thread.sleep(100);
+                Thread.sleep(1000);
                 User user = User.builder()
                         .name(UUID.randomUUID().toString())
                         .age((int) (Math.random() * 100))
@@ -27,8 +32,9 @@ public class DataProducer {
                 log.info("Sending {}", user.toString());
                 producer.send(new ProducerRecord<>(ReplicateMain.INPUT_TOPIC, user));
             }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
-
 }
 

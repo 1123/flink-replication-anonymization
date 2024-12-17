@@ -9,9 +9,14 @@ import java.util.Properties;
 
 
 @Slf4j
-public class DataConsumer {
+public class DataConsumer implements Runnable{
 
     public static void main(String[] args) {
+        new DataProducer().run();
+    }
+
+    @Override
+    public void run() {
         Properties properties = new Properties();
         properties.put("bootstrap.servers", ReplicateConfig.cluster2BootstrapServers());
         properties.put("key.deserializer", StringDeserializer.class);
@@ -26,6 +31,5 @@ public class DataConsumer {
             }
         }
     }
-
 }
 

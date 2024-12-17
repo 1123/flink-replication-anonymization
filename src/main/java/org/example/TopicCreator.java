@@ -12,6 +12,10 @@ import java.util.concurrent.ExecutionException;
 public class TopicCreator {
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
+        new TopicCreator().createTopics();
+    }
+
+    public void createTopics() throws ExecutionException, InterruptedException {
         Properties properties1 = new Properties();
         properties1.put("bootstrap.servers", ReplicateConfig.cluster1BootstrapServers());
         Properties properties2 = new Properties();
@@ -25,10 +29,18 @@ public class TopicCreator {
                 log.warn("Delete topics failed");
             }
             Thread.sleep(1000);
-            admin1.createTopics(List.of(new NewTopic(ReplicateMain.INPUT_TOPIC, 1, (short) 1)))
-                    .all().get();
-            admin2.createTopics(List.of(new NewTopic(ReplicateMain.OUTPUT_TOPIC, 1, (short) 1)))
-                    .all().get();
+            try {
+                admin1.createTopics(List.of(new NewTopic(ReplicateMain.INPUT_TOPIC, 1, (short) 1)))
+                        .all().get();
+            } catch (Exception e) {
+                log.warn("Exception while creating input topic: {}", e.getMessage());
+            }
+            try {
+                admin2.createTopics(List.of(new NewTopic(ReplicateMain.OUTPUT_TOPIC, 1, (short) 1)))
+                        .all().get();
+            } catch (Exception e) {
+                log.warn("Exception while creating output topic: {}", e.getMessage());
+            }
             log.info("Created topics");
         }
     }
