@@ -30,14 +30,14 @@ public class TopicCreator {
 
     private void tryCreateTopics(AdminClient adminClient1, AdminClient adminClient2) {
         try {
-            adminClient1.createTopics(List.of(new NewTopic(ReplicateMain.INPUT_TOPIC, 1, (short) 1)))
+            adminClient1.createTopics(List.of(new NewTopic(ReplicateMain.INPUT_TOPIC, 6, (short) 3)))
                     .all().get();
             log.info("Created input topic");
         } catch (Exception e) {
             log.warn("Exception while creating input topic: {}", e.getMessage());
         }
         try {
-            adminClient2.createTopics(List.of(new NewTopic(ReplicateMain.OUTPUT_TOPIC, 1, (short) 1)))
+            adminClient2.createTopics(List.of(new NewTopic(ReplicateMain.OUTPUT_TOPIC, 6, (short) 3)))
                     .all().get();
             log.info("Created output topic");
         } catch (Exception e) {

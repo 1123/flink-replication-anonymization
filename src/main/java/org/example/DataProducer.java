@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Slf4j
 public class DataProducer implements Runnable {
-    private static final int SLEEP_MILLIS = 100;
+    private static final int SLEEP_MILLIS = 10;
 
     public static void main(String[] args) throws InterruptedException {
         new DataProducer().run();

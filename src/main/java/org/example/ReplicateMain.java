@@ -39,7 +39,7 @@ public class ReplicateMain {
                 .build();
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.fromSource(source, WatermarkStrategy.noWatermarks(), "messages from kafka")
-                .setParallelism(2)
+                .setParallelism(4)
                 .map(user -> User.builder()
                         .uuid(user.getUuid())
                         .name("XXXXXX")
