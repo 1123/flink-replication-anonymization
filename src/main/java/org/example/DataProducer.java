@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Slf4j
 public class DataProducer implements Runnable {
+    private static final int SLEEP_MILLIS = 100;
 
     public static void main(String[] args) throws InterruptedException {
         new DataProducer().run();
@@ -23,7 +24,7 @@ public class DataProducer implements Runnable {
         properties.put("value.serializer", UserSerializer.class);
         try(KafkaProducer<String, User> producer = new KafkaProducer<>(properties)) {
             while (true) {
-                Thread.sleep(1000);
+                Thread.sleep(SLEEP_MILLIS);
                 User user = User.builder()
                         .name(UUID.randomUUID().toString())
                         .age((int) (Math.random() * 100))
